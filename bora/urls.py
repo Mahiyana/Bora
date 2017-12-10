@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
     path('artykuly', views.articles),
-    #path('dodaj_artykul', views.add_article),
+    path('dodaj_artykul', views.add_article),
     path('artykul/<int:id>/', views.article, name='show_article'),
     path('dodaj_kategorie', views.add_article_category),
 ]

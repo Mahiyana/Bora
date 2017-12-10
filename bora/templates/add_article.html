@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1> Dodaj nową kategorię</h1>
+<h1> Dodaj nowy artykuł </h1>
 
 <form action="" method="post">
-    {% csrf_token %}
-    {{ form }}
+   {% csrf_token %}
+   <table> 
+   {{ form }}
+   </table>
     <input type="submit" value="Dodaj" />
 </form>
 

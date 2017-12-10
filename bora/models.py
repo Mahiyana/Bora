@@ -8,9 +8,11 @@ class User(AbstractUser):
 
 class ArticleCategory(models.Model):
     name = models.TextField(verbose_name=_('Name'))
+    def __str__(self):
+        return self.name
 
 class Article(models.Model):
-    title = models.TextField(verbose_name=_('Title'))
+    title = models.CharField(verbose_name=_('Title'), max_length=255)
     content = models.TextField(verbose_name=_('Content'))
     views = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
