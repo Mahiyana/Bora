@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1> Artykuły </h1>
-  <ul>
-  {% for article in articles %}
-  <li><a href='{% url 'show_article' id=article.id%}'>{{ article.title }}</a></li> 
+  
+  <h2>Kategorie:</h2>
+  {% for category, articles in grouped_articles.items %}
+     <ul>
+     <li id='cat{{category|slugify}}'><a href='#{{category|slugify}}'>{{category}}</a></li>
+     </ul>
   {% endfor %}
-  </ul>
+
+  {% for category, articles in grouped_articles.items %} 
+     <h2 id='cat{{category|slugify}}'><a href='#{{category|slugify}}'>{{category}}</a></h2>
+     <ul>
+    {% for article in articles %}
+    <li><a href='{% url 'show_article' id=article.id%}'>{{ article.title }}</a></li> 
+    {% endfor %}
+    </ul>
+  {% endfor %}
 {% endblock %}

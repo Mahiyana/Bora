@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.urls import path
 from django.contrib import admin
+from django.conf import settings
 from . import views
 
 
@@ -26,4 +28,9 @@ urlpatterns = [
     path('dodaj_artykul', views.add_article),
     path('artykul/<int:id>/', views.article, name='show_article'),
     path('dodaj_kategorie', views.add_article_category),
-]
+    path('galerie', views.galleries),
+    path('galeria/<int:id>/', views.gallery, name='show_gallery'),
+    path('dodaj_galerie', views.add_gallery),
+    path('edytuj_galerie/<int:id>/', views.edit_gallery, name='edit_gallery'),
+    path('dodaj_prace', views.add_artwork),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

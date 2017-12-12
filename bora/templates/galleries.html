@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> Galerie </h1>
+  {% for gallery in galleries %} 
+     {% if perms.bora.change_gallery %}
+       <div class='float-right'><a href='{% url 'edit_gallery' id=gallery.id %}'>Edytuj</a></div>
+     {% endif %}
+     <h2><a href='{% url 'show_gallery' id=gallery.id %}'>{{ gallery.title }}</a></h2>
+     <p>{{ gallery.description }}</p>
+ {% endfor %}
+{% endblock %}

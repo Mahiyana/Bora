@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block content %}
+  <h1>{{ gallery.title }}</h1>
+  {% for artwork in gallery.artwork_set.all %}
+  {{artwork.title}}
+  {% thumbnail artwork.image "100x100" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width}}" height="{{ im.height }}">
+  {% endthumbnail %}  
+  {% endfor %}
+{% endblock %}
