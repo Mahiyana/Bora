@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.urls import path
 from django.contrib import admin
@@ -24,13 +24,20 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
-    path('artykuly', views.articles),
+    path('artykuly', views.articles, name='articles'),
     path('dodaj_artykul', views.add_article),
+    path('edytuj_artykul/<int:id>/', views.edit_article, name='edit_article'),
     path('artykul/<int:id>/', views.article, name='show_article'),
     path('dodaj_kategorie', views.add_article_category),
-    path('galerie', views.galleries),
+    path('galerie', views.galleries, name='galleries'),
     path('galeria/<int:id>/', views.gallery, name='show_gallery'),
     path('dodaj_galerie', views.add_gallery),
     path('edytuj_galerie/<int:id>/', views.edit_gallery, name='edit_gallery'),
     path('dodaj_prace', views.add_artwork),
+    path('praca/<int:id>/', views.artwork, name='show_artwork'),
+    path('edytuj_prace/<int:id>/', views.edit_artwork, name='edit_artwork'),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('czlonkowie', views.members, name='members'),
+    path('czlonek/<str:username>/', views.member, name='show_member'),
+    path('wydarzenia', views.events, name='events'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

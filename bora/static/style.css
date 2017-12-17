@@ -1,0 +1,11 @@
+.gallery-tile {
+    float: left;
+    text-align: center;
+    margin-right: 32px;
+    width: 200px;
+}
+
+.gallery-tile > a > img {
+    display: block;
+    margin-bottom: 0.6em;
+}

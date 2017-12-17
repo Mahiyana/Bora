@@ -2,4 +2,7 @@
 {% block content %}
 <h1> {{ article.title }} </h1>
   <p> {{ article.content }} </p>
+  {% if user == article.author or perms.bora.change_article %}
+     <a href='{% url 'edit_article' id=article.id %}'>Edytuj</a>
+  {% endif %}
 {% endblock %}

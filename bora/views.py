@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Article, Gallery, Artwork
+from .models import Article, Gallery, Artwork, User
 from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, 'base.html')
@@ -24,6 +25,7 @@ def article(request, id):
     article = Article.objects.get(id=id)
     return render(request, 'article.html', {'article': article})
 
+@login_required
 def add_article(request):
     form = ArticleForm()
     if request.method == 'POST':
@@ -35,6 +37,20 @@ def add_article(request):
         form =  ArticleForm()
     return render(request, 'add_article.html', {'form': form})
 
+@login_required
+def edit_article(request, id):
+    form = ArticleForm()
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES, instance=Article.objects.get(id=id))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance)
+    else:
+        form =  ArticleForm(instance=Article.objects.get(id=id))
+    return render(request, 'edit_article.html', {'form': form})
+
+
+@login_required
 def add_article_category(request):
     form = ArticleCategoryForm()
     if request.method == 'POST':
@@ -54,6 +70,7 @@ def gallery(request, id):
     gallery = Gallery.objects.get(id=id)
     return render(request, 'gallery.html', {'gallery': gallery})
 
+@login_required
 def add_gallery(request):
     form = GalleryForm()
     if request.method == 'POST':
@@ -65,6 +82,7 @@ def add_gallery(request):
         form =  GalleryForm()
     return render(request, 'add_gallery.html', {'form': form})
 
+@login_required
 def edit_gallery(request, id):
     form = GalleryForm()
     if request.method == 'POST':
@@ -76,6 +94,7 @@ def edit_gallery(request, id):
         form =  GalleryForm(instance=Gallery.objects.get(id=id))
     return render(request, 'edit_gallery.html', {'form': form})
 
+@login_required
 def add_artwork(request):
     form = ArtworkForm()
     if request.method == 'POST':
@@ -88,3 +107,31 @@ def add_artwork(request):
     else:
         form =  ArtworkForm()
     return render(request, 'add_artwork.html', {'form': form})
+
+def artwork(request, id):
+    artwork = Artwork.objects.get(id=id)
+    return render(request, 'artwork.html', {'artwork':artwork})
+
+@login_required
+def edit_artwork(request, id):
+    form = ArtworkForm()
+    if request.method == 'POST':
+        form = ArtworkForm(request.POST, request.FILES, instance=Artwork.objects.get(id=id))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance)
+    else:
+        form =  ArtworkForm(instance=Artwork.objects.get(id=id))
+    return render(request, 'edit_artwork.html', {'form': form})
+
+def members(request):
+    return render(request, 'base.html')
+
+def member(request, username):
+    member = User.objects.get(username=username)
+    return render(request, 'member.html', {'member':member})
+
+def events(request):
+    return render(request, 'base.html')
+
+

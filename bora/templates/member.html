@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> {{ member.username }} </h1>
+  {% if user == member or perms.bora.change_user %}
+  <a href=''>Edytuj</a>
+  {% endif %}
+{% endblock %}

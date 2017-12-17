@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> Edytuj pracę "{{ form.instance.title }}"</h1>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form }}
+    </table>
+    <input type="submit" value="Zapisz" />
+</form>
+
+{% endblock %}

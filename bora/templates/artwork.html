@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<img style='max-width: 100%' src='{{ artwork.image.url }}'>
+<h1> {{ artwork.title }} </h1>
+  <p> {{ artwork.description }} </p>
+  {% if user == arwork.author or perms.bora.change_artwork %}
+  <a href='{% url 'edit_artwork' id=artwork.id %}'>Edytuj</a>
+  {% endif %}
+{% endblock %}

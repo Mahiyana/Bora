@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -10,9 +11,23 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static "style.css" %}">
   </head>
 
   <body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">Manda'Yaim</a>
+      <div class="container-fluid">
+      <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href='{% url 'members' %}'>Członkowie</a></li>
+	<li><a class="nav-link" href='{% url 'articles' %}'>Artykuły</a></li>
+	<li><a class="nav-link" href='{% url 'galleries' %}'>Galeria</a></li>
+	<li><a class="nav-link" href='{% url 'events' %}'>Relacje</a></li>
+      </ul>
+      </div>
+      </div>
+    </nav>	    
     <main role="main" class="container">
 
     {% block content %}
