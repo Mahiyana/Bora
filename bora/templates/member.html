@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1> {{ member.username }} </h1>
+<h1> {{ member.name }} </h1>
+{% if member.aliik %}
+  <img src='{{ member.aliik.url }}' style='max-width: 30%'>
+{% endif %}
+<div>Imie: {{ member.name }}</div>
+<div>Pseudonim artystyczny: {{ member.art_name }}</div>
+<div>Pseudonim operacyjny: {{ member.op_name }}</div>
+<div>Ranga: {{ member.rank }}</div>
+<hr>
+<h2>Historia alter ego</h2>
+<div> {{ member.story }} </div>
+<hr>
+<h2>Prywatnie</h2>
+<div> {{ member.about }} </div>
   {% if user == member or perms.bora.change_user %}
-  <a href=''>Edytuj</a>
+  <a href='{% url 'edit_profile' username=member.username %}'>Edytuj</a>
   {% endif %}
 {% endblock %}

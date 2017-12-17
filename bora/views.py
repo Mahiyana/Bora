@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Article, Gallery, Artwork, User
-from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm
+from .models import Article, Gallery, Artwork, User, Event, Report
+from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm, UserForm, EventForm, ReportForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Max
+from django.urls import resolve 
+from urllib.parse import urlparse
 
 def index(request):
     return render(request, 'base.html')
@@ -102,10 +105,14 @@ def add_artwork(request):
         form = ArtworkForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.user = request.user
+            
             form.save()
             return redirect('/galerie')
     else:
-        form =  ArtworkForm()
+        gallery_id = resolve(urlparse(request.META['HTTP_REFERER']).path).kwargs['id']
+        instance = Artwork(gallery_id=gallery_id)
+        form =  ArtworkForm(instance=instance)
+        #form.instance.gallery = Gallery.objects.get(id=gallery_id)
     return render(request, 'add_artwork.html', {'form': form})
 
 def artwork(request, id):
@@ -125,13 +132,105 @@ def edit_artwork(request, id):
     return render(request, 'edit_artwork.html', {'form': form})
 
 def members(request):
-    return render(request, 'base.html')
+    members = User.objects.all()
+    grouped_members = {}
+    other = []
+    for member in members:
+        if member.rank is None:
+          other.append(member)
+          continue
+        if member.rank.name not in grouped_members:
+          grouped_members[member.rank.name] = []
+        grouped_members[member.rank.name].append(member)
+    if len(other) > 0:
+        grouped_members['Inne'] = other
+    return render(request, 'members.html', {'grouped_members': grouped_members})
 
 def member(request, username):
     member = User.objects.get(username=username)
     return render(request, 'member.html', {'member':member})
 
-def events(request):
-    return render(request, 'base.html')
+@login_required
+def edit_profile(request, username):
+    form = UserForm()
+    if request.method == 'POST':
+        form = UserForm(request.POST, request.FILES, instance=User.objects.get(username=username))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance)
+    else:
+        form = UserForm(instance=User.objects.get(username=username))
+    return render(request, 'edit_profile.html', {'form': form})
 
 
+def events(request, year):
+    events = Event.objects.filter(year=year)
+    years = Event.objects.order_by('year').distinct().values_list('year', flat=True) 
+    return render(request, 'events.html', {'events': events, 'years': years})
+
+def events_redirect(request):
+    biggest_year = Event.objects.all().aggregate(Max('year'))['year__max']
+    return redirect('events', year=biggest_year)
+
+def event(request, id):
+    event = Event.objects.get(id=id)
+    reports= Report.objects.filter(event=event)
+    user_wrote_report = False
+    user_reports = Report.objects.filter(author=request.user).count()
+    if user_reports > 0:
+        user_wrote_report = True
+    return render(request, 'event.html', {'event': event, 'reports': reports, 'user_wrote_report': user_wrote_report})
+
+@login_required
+def add_event(request):
+    form = EventForm()
+    if request.method == 'POST':
+        print(request.POST)
+        form = EventForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.user = request.user
+            form.save()
+            return redirect(form.instance)
+    else:
+        form = EventForm()
+    return render(request, 'add_event.html', {'form': form})
+
+
+@login_required
+def edit_event(request, id):
+    form = EventForm()
+    if request.method == 'POST':
+        form = EventForm(request.POST, request.FILES, instance=Event.objects.get(id=id))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance)
+    else:
+        form = EventForm(instance=Event.objects.get(id=id))
+    return render(request, 'edit_event.html', {'form': form})
+
+@login_required
+def add_report(request, event_id):
+    form = ReportForm()
+    if request.method == 'POST':
+        print(request.POST)
+        form = ReportForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.instance.event = Event.objects.get(id=event_id)  
+            form.save()
+            return redirect(form.instance.event)
+    else:
+        form =  ReportForm()
+    return render(request, 'add_report.html', {'form': form})
+
+@login_required
+def edit_report(request, id):
+    form = ReportForm()
+    if request.method == 'POST':
+        form = ReportForm(request.POST, request.FILES, instance=Report.objects.get(id=id))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance.event)
+    else:
+        form = ReportForm(instance=Report.objects.get(id=id))
+    return render(request, 'edit_report.html', {'form': form})

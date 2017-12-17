@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> Członkowie </h1>
+  {% for rank, members in grouped_members.items %} 
+     <h2>{{rank}}</h2>
+     <ul>
+    {% for member in members %}
+    <li><a href='{% url 'show_member' username=member.username%}'>{{ member.name }}</a></li> 
+    {% endfor %}
+    </ul>
+  {% endfor %}
+{% endblock %}

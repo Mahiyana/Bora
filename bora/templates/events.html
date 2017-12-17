@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> Relacje z konwentów </h1>
+ 
+  <div class=container>
+  <nav>
+  {% for year in years %}
+  <a href='{% url 'events' year=year %}'>{{ year }}</a>
+  {% endfor %}
+  </nav>
+  <div>
+
+  {% for event in events %} 
+     <ul>
+      <div> {{ event.name }} </div>
+      <div> {{ event.description }} </div>
+      <div> {{ event.year }} </div>
+      <div><a href='{% url 'event' id=event.id %}'>Przeczytaj szczegóły w relacji</a></div>
+    </ul>
+  {% endfor %}
+  {% if perms.bora.add_event %}
+    <a href='{% url 'add_event' %}'>Dodaj wydarzenie</a></div>
+  {% endif %}
+{% endblock %}

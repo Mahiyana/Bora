@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> {{ event.name }} </h1>
+  <p> {{ event.introduction }} </p>
+  {% for report in reports %}
+    {% if report.report %}
+      <h3> {{ report.author.name }} </h3>
+      {% if report.image %}
+        <img src='{{ report.image.url }}' style='max-width:30%'>
+      {% endif %}
+      <p>{{ report.report }}
+      {% if perms.bora.change_report or user == report.author %}
+        <a href='{% url 'edit_report' id=report.id %}'>Edytuj</a>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  <p> {{ event.ending }} </p>
+  {% if perms.bora.add_report and not user_wrote_report %}
+     <a href='{% url 'add_report' event_id=event.id %}'>Dodaj swoją relację</a>
+  {% endif %}
+  {% if perms.bora.change_event %}
+     <a href='{% url 'edit_event' id=event.id %}'>Edytuj</a>
+  {% endif %}
+{% endblock %}

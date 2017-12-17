@@ -17,4 +17,7 @@
     {% endfor %}
     </ul>
   {% endfor %}
+  {% if perms.bora.add_article %}
+    <a href='{% url 'add_article' %}'>Dodaj artykuł</a> 
+  {% endif %}
 {% endblock %}

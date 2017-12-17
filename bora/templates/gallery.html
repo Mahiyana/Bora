@@ -13,4 +13,8 @@
   </a>
   </div>
   {% endfor %}
+  
+  {% if perms.bora.add_artwork %}
+  <a href='{% url 'add_artwork' %}'>Dodaj</a>
+  {% endif %}
 {% endblock %}

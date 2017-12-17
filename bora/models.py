@@ -12,12 +12,17 @@ def aliiki(instance, filename):
     return 'aliiki/{0}'.format(filename)
 
 class User(AbstractUser):
-    art_name = models.TextField(verbose_name=_('Art name'), null=True)
-    op_name = models.TextField(verbose_name=_('Operation name'), null=True)
-    aliik = ImageField(upload_to=aliiki, null=True)
-    story = models.TextField(verbose_name=_('Story'), null=True)
-    about = models.TextField(verbose_name=_('About'), null=True)
-    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, null=True)
+    name = models.CharField(verbose_name=_('Name'), max_length=255)
+    art_name = models.CharField(verbose_name=_('Art name'), max_length=255, null=True, blank=True)
+    op_name = models.CharField(verbose_name=_('Operation name'), max_length=255, null=True, blank=True)
+    aliik = ImageField(upload_to=aliiki, null=True, blank=True)
+    story = models.TextField(verbose_name=_('Story'), null=True, blank=True)
+    about = models.TextField(verbose_name=_('About'), null=True, blank=True)
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE, null=True, blank=True)
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('show_member', args=[self.username])
+
 
 class ArticleCategory(models.Model):
    name = models.TextField(verbose_name=_('Name'))
@@ -56,3 +61,21 @@ class Artwork(models.Model):
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('show_artwork', args=[self.id])
+
+class Event(models.Model):
+    name = models.CharField(verbose_name=_('Name'), max_length=255)
+    introduction = models.TextField(verbose_name=_('Introduction'))
+    ending = models.TextField(verbose_name=_('Ending'))
+    year = models.PositiveIntegerField(verbose_name=_('Year'))
+    views = models.PositiveIntegerField(default=0)
+    description = models.TextField(verbose_name=_('Description'))
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('event', args=[self.id])
+
+
+class Report(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    image = ImageField(upload_to=aliiki, null=True, blank=True)
+    report = models.TextField(verbose_name=_('Report'), null=True, blank=True)
