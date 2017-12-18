@@ -5,4 +5,9 @@
   {% if user == article.author or perms.bora.change_article %}
      <a href='{% url 'edit_article' id=article.id %}'>Edytuj</a>
   {% endif %}
-{% endblock %}
+  <br>
+  {% if perms.bora.delete_article %}
+     <a href='{% url 'delete_article' id=article.id %}'>Usuń</a>
+  {% endif %}
+
+  {% endblock %}

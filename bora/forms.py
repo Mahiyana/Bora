@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import ArticleCategory, Article, Gallery, Artwork, User, Event, Report
+from .models import ArticleCategory, Article, Gallery, Artwork, User, Event, Report, Review, ReviewItem, ReviewCategory
 
 class ArticleCategoryForm(ModelForm):
     class Meta:
@@ -9,7 +9,7 @@ class ArticleCategoryForm(ModelForm):
 class ArticleForm(ModelForm):
     class Meta:
         model = Article
-        fields = ['title', 'content', 'category', 'author']
+        fields = ['title', 'content', 'category']
 
 class GalleryForm(ModelForm):
     class Meta:
@@ -19,7 +19,7 @@ class GalleryForm(ModelForm):
 class ArtworkForm(ModelForm):
     class Meta:
         model = Artwork
-        fields = ['author', 'gallery', 'title', 'description', 'image']
+        fields = ['gallery', 'title', 'description', 'image']
 
 class UserForm(ModelForm):
     class Meta:
@@ -34,4 +34,14 @@ class EventForm(ModelForm):
 class ReportForm(ModelForm):
     class Meta:
         model = Report
-        fields = ['image', 'report']       
+        fields = ['image', 'report']
+
+class ReviewForm(ModelForm):
+    class Meta:
+        model = Review
+        fields = ['review', 'rating', 'item']
+
+class ReviewItemForm(ModelForm):
+    class Meta:
+        model = ReviewItem
+        fields = ['category', 'title', 'cover', 'org_title', 'author', 'translator'] 

@@ -15,9 +15,11 @@
     {% endif %}
   {% endfor %}
   <p> {{ event.ending }} </p>
+  <br><br>
   {% if perms.bora.add_report and not user_wrote_report %}
      <a href='{% url 'add_report' event_id=event.id %}'>Dodaj swoją relację</a>
   {% endif %}
+  <br>
   {% if perms.bora.change_event %}
      <a href='{% url 'edit_event' id=event.id %}'>Edytuj</a>
   {% endif %}

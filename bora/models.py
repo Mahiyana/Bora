@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from sorl.thumbnail import ImageField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Rank(models.Model):
    name = models.TextField(verbose_name=_('Name'))
@@ -46,9 +47,12 @@ class Gallery(models.Model):
     description = models.TextField(verbose_name=_('Description'))
     def __str__(self):
         return self.title
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('show_gallery', args=[self.id])
 
 def user_gallery_path(instance, filename):
-    return 'prace/{0}/{1}'.format(instance.user.username, filename)
+    return 'prace/{0}/{1}'.format(instance.author.username, filename)
 
 class Artwork(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -79,3 +83,33 @@ class Report(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     image = ImageField(upload_to=aliiki, null=True, blank=True)
     report = models.TextField(verbose_name=_('Report'), null=True, blank=True)
+
+class ReviewCategory(models.Model):
+    name = models.CharField(verbose_name=_('Name'), max_length=255)
+    def __str__(self):
+        return self.name
+
+
+def covers(instance, filename):
+    return 'okladki/{0}'.format(filename)
+
+class ReviewItem(models.Model):
+    category = models.ForeignKey(ReviewCategory, on_delete=models.CASCADE, null=True)
+    title = models.CharField(verbose_name=_('Title'), max_length=255)
+    cover = ImageField(upload_to=covers, null=True, blank=True)
+    org_title = models.CharField(verbose_name=_('Orginal Title'), max_length=255)
+    author = models.CharField(verbose_name=_('Author'), max_length=255)
+    translator = models.CharField(verbose_name=_('Translator'), max_length=255, null=True)
+    def __str__(self):
+        return self.title
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('whole_review', args=[self.id])
+
+
+
+class Review(models.Model):
+    item = models.ForeignKey(ReviewItem, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    review = models.TextField(verbose_name=_('Review'), null=True, blank=True)
+    rating = models.PositiveIntegerField(verbose_name=_('Rating'), validators=[MinValueValidator(0), MaxValueValidator(10)])

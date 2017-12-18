@@ -16,6 +16,9 @@
       <div> {{ event.description }} </div>
       <div> {{ event.year }} </div>
       <div><a href='{% url 'event' id=event.id %}'>Przeczytaj szczegóły w relacji</a></div>
+      {% if perms.bora.edit_event %}
+        <a href='{% url 'edit_event' id=event.id %}'>Edytuj</a></div>
+      {% endif %}
     </ul>
   {% endfor %}
   {% if perms.bora.add_event %}

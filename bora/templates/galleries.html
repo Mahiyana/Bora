@@ -8,4 +8,7 @@
      <h2><a href='{% url 'show_gallery' id=gallery.id %}'>{{ gallery.title }}</a></h2>
      <p>{{ gallery.description }}</p>
  {% endfor %}
+ {% if perms.bora.add_gallery %}
+   <a href='{% url 'add_gallery' %}'>Dodaj nową galerię</a>
+ {% endif %}
 {% endblock %}

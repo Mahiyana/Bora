@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> Recenzje </h1>
+  
+  <h2>Kategorie:</h2>
+  {% for category, reviews in grouped_reviews.items %}
+     <ul>
+     <li id='cat{{category|slugify}}'><a href='#{{category|slugify}}'>{{category}}</a></li>
+     </ul>
+  {% endfor %}
+
+  {% for category, reviews in grouped_reviews.items %} 
+     <h2 id='cat{{category|slugify}}'><a href='#{{category|slugify}}'>{{category}}</a></h2>
+     <ul>
+    {% for review in reviews %}
+    <li><a href='{% url 'whole_review' id=review.id%}'>{{ review.title }}</a></li> 
+    {% endfor %}
+    </ul>
+  {% endfor %}
+  {% if perms.bora.add_review%}
+    <a href='{% url 'add_review_item' %}'>Dodaj pozycję</a> 
+  {% endif %}
+{% endblock %}

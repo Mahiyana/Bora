@@ -6,4 +6,9 @@
   {% if user == arwork.author or perms.bora.change_artwork %}
   <a href='{% url 'edit_artwork' id=artwork.id %}'>Edytuj</a>
   {% endif %}
+  <br>
+  {% if perms.bora.delete_artwork %}
+  <a href='{% url 'delete_artwork' id=artwork.id %}'>Usuń</a>
+  {% endif %}
+
 {% endblock %}

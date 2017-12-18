@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> {{ review_item.title }} </h1>
+  <div>Tytuł orginalny: {{ review_item.org_title }} </div>
+  <div>Autor: {{ review_item.author }} </div>
+  <div>Tłumacz: {{ review_item.translator }} </div>
+
+  {% for review in reviews %}
+      <h3> {{ review.author.name }} </h3>
+      <p>{{ review.review }}
+      <div> Ocena : {{ review.rating }} </div>
+      {% if perms.bora.change_review or user == review.author %}
+        <a href='{% url 'edit_review' id=review.id %}'>Edytuj</a>
+      {% endif %}
+  {% endfor %}
+  <br>
+  <br>
+  {% if perms.bora.add_review and not user_wrote_review %}
+     <a href="{% url 'add_review'  %}">Dodaj swoją recenzję</a>
+  {% endif %}
+  <br>
+  {% if perms.bora.change_review %}
+     <a href="{% url 'edit_review_item' id=review_item.id %}">Edytuj</a>
+  {% endif %}
+{% endblock %}
