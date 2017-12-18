@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> {{ news.title }} </h1>
+  <p> {{ news.content }} </p>
+  {% if user == article.author or perms.bora.change_news %}
+     <a href='{% url 'edit_news' id=news.id %}'>Edytuj</a>
+  {% endif %}
+  <br>
+  {% if perms.bora.delete_news %}
+     <a href='{% url 'delete_news' id=news.id %}'>Usuń</a>
+  {% endif %}
+
+  {% endblock %}

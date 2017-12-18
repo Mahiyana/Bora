@@ -24,6 +24,7 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index),
+    
     path('artykuly', views.articles, name='articles'),
     path('dodaj_artykul', views.add_article, name='add_article'),
     path('edytuj_artykul/<int:id>/', views.edit_article, name='edit_article'),
@@ -58,5 +59,11 @@ urlpatterns = [
     path('edytuj_pozycje_do_recenzji/<int:id>', views.edit_review_item, name='edit_review_item'),
     path('recenzje', views.reviews, name='reviews'),
     path('dodaj_recenzje', views.add_review, name='add_review'),
-    path('edytuj_recenzje/<int:id>', views.edit_review, name='edit_review'), 
+    path('edytuj_recenzje/<int:id>', views.edit_review, name='edit_review'),
+
+    path('edytuj_newsa/<int:id>/', views.edit_news, name='edit_news'),
+    path('usun_newsa/<int:id>/', views.delete_news, name='delete_news'),
+    path('news/<int:id>/', views.news, name='news'),
+    path('dodaj_newsa', views.add_news, name='add_news'),
+ 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% if perms.bora.add_news %}
+    <a href='{% url 'add_news' %}'>Dodaj newsa</a> 
+  {% endif %}
+
+  {% for new in news %} 
+  <h2><a href='{% url 'news' id=new.id%}'>{{ new.title }}</a></h2>
+    <div>{{ new.category }}</div>
+    <p>{{ new.content }}</p>
+    <div>Autor: {{ new.author.name }}</div>
+  {% endfor %}
+ {% endblock %}

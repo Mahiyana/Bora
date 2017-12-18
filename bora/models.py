@@ -106,10 +106,27 @@ class ReviewItem(models.Model):
         from django.urls import reverse
         return reverse('whole_review', args=[self.id])
 
-
-
 class Review(models.Model):
     item = models.ForeignKey(ReviewItem, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     review = models.TextField(verbose_name=_('Review'), null=True, blank=True)
     rating = models.PositiveIntegerField(verbose_name=_('Rating'), validators=[MinValueValidator(0), MaxValueValidator(10)])
+
+class NewsCategory(models.Model):
+   name = models.TextField(verbose_name=_('Name'))
+   def __str__(self):
+        return self.name
+
+class News(models.Model):
+    title = models.CharField(verbose_name=_('Title'), max_length=255)
+    content = models.TextField(verbose_name=_('Content'))
+    views = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(NewsCategory, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    def get_absolute_url(self):
+        from django.urls import reverse
+        return reverse('show_article', args=[self.id])
+
+

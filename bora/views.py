@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Article, Gallery, Artwork, User, Event, Report, ReviewItem, ReviewCategory, Review
-from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm, UserForm, EventForm, ReportForm, ReviewItemForm, ReviewForm
+from .models import Article, Gallery, Artwork, User, Event, Report, ReviewItem, ReviewCategory, Review, News, NewsCategory
+from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm, UserForm, EventForm, ReportForm, ReviewItemForm, ReviewForm, NewsForm
 from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.urls import resolve 
 from urllib.parse import urlparse
 
 def index(request):
-    return render(request, 'base.html')
+    news = News.objects.order_by('-created_at')
+    return render(request, 'main.html', {'news': news})
 
 def articles(request):
     articles = Article.objects.all()
@@ -324,4 +325,39 @@ def edit_review(request, id):
         form =  ReviewForm(instance=Review.objects.get(id=id))
     return render(request, 'edit_review.html', {'form': form})
 
+@login_required
+def add_news(request):
+    form = NewsForm()
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.save()
+            return redirect('/')
+    else:
+        form =  NewsForm()
+    return render(request, 'add_news.html', {'form': form})
 
+@login_required
+def edit_news(request, id):
+    form = NewsForm()
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES, instance=News.objects.get(id=id))
+        if form.is_valid():
+            form.save()
+            return redirect(form.instance)
+    else:
+        form = NewsForm(instance=News.objects.get(id=id))
+    return render(request, 'edit_news.html', {'form': form})
+
+@login_required
+def delete_news(request, id):
+    news = News.objects.get(id=id)
+    if request.method == 'POST':
+        news.delete()
+        return redirect('/')
+    return render(request, 'delete_news.html', {'news': news})
+
+def news(request, id):
+    news = News.objects.get(id=id)
+    return render(request, 'news.html', {'news':news})
