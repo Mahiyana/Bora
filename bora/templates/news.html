@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1> {{ news.title }} </h1>
+<h4> {{ news.category }} </h4>
   <p> {{ news.content }} </p>
   {% if user == article.author or perms.bora.change_news %}
      <a href='{% url 'edit_news' id=news.id %}'>Edytuj</a>

@@ -127,6 +127,6 @@ class News(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse('show_article', args=[self.id])
+        return reverse('news', args=[self.id])
 
 
