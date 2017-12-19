@@ -10,4 +10,26 @@
     <p>{{ new.content }}</p>
     <div>Autor: {{ new.author.name }}</div>
   {% endfor %}
+  <br><br> 
+  <nav>
+  <ul class="pagination">
+        {% if news.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo;</a></li>
+            <li class="page-item"><a class="page-link"href="?page={{ news.previous_page_number }}">previous</a></li>
+        {% else %}
+            <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+            <li class="page-item disabled"><a class="page-link"href="#">previous</a></li>
+        {% endif %}
+
+            <li class="page-item disabled"><a class="page-link" href='#'>{{ news.number }}</a></li>
+
+        {% if news.has_next %}
+            <li class="page-item"><a class="page-link"href="?page={{ news.next_page_number }}">next</a></li>
+            <li class="page-item"><a class="page-link"href="?page={{ news.paginator.num_pages }}">&raquo;</a></li>
+        {% else %}
+             <li class="page-item disabled"><a class="page-link"href="#">next</a></li>
+             <li class="page-item disabled"><a class="page-link"href="#">&raquo;</a></li>
+        {% endif %}
+  </ul>
+  </nav>
  {% endblock %}

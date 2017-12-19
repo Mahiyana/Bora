@@ -5,9 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.urls import resolve 
 from urllib.parse import urlparse
+from django.core.paginator import Paginator
 
 def index(request):
     news = News.objects.order_by('-created_at')
+    paginator = Paginator(news, 5)
+    page = request.GET.get('page',1)
+    news = paginator.get_page(page)
     return render(request, 'main.html', {'news': news})
 
 def articles(request):
