@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Article, Gallery, Artwork, User, Event, Report, ReviewItem, ReviewCategory, Review, News, NewsCategory
 from .forms import ArticleCategoryForm, ArticleForm, GalleryForm, ArtworkForm, UserForm, EventForm, ReportForm, ReviewItemForm, ReviewForm, NewsForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Max
 from django.urls import resolve 
 from urllib.parse import urlparse
 from django.core.paginator import Paginator
+from django.http import HttpResponseForbidden
 
 def index(request):
     news = News.objects.order_by('-created_at')
@@ -34,6 +35,7 @@ def article(request, id):
     return render(request, 'article.html', {'article': article})
 
 @login_required
+@permission_required('bora.add_article')
 def add_article(request):
     form = ArticleForm()
     if request.method == 'POST':
@@ -48,6 +50,8 @@ def add_article(request):
 
 @login_required
 def edit_article(request, id):
+    if(not request.user.has_perm('bora.change_article') and Article.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
     form = ArticleForm()
     if request.method == 'POST':
         form = ArticleForm(request.POST, request.FILES, instance=Article.objects.get(id=id))
@@ -59,6 +63,7 @@ def edit_article(request, id):
     return render(request, 'edit_article.html', {'form': form})
 
 @login_required
+@permission_required('bora.delete_article')
 def delete_article(request, id):
     article = Article.objects.get(id=id)
     if request.method == 'POST':
@@ -87,6 +92,7 @@ def gallery(request, id):
     return render(request, 'gallery.html', {'gallery': gallery})
 
 @login_required
+@permission_required('bora.add_gallery')
 def add_gallery(request):
     form = GalleryForm()
     if request.method == 'POST':
@@ -99,6 +105,7 @@ def add_gallery(request):
     return render(request, 'add_gallery.html', {'form': form})
 
 @login_required
+@permission_required('bora.change_gallery')
 def edit_gallery(request, id):
     form = GalleryForm()
     if request.method == 'POST':
@@ -111,6 +118,7 @@ def edit_gallery(request, id):
     return render(request, 'edit_gallery.html', {'form': form})
 
 @login_required
+@permission_required('bora.add_artwork')
 def add_artwork(request):
     form = ArtworkForm()
     if request.method == 'POST':
@@ -132,6 +140,8 @@ def artwork(request, id):
 
 @login_required
 def edit_artwork(request, id):
+    if(not request.user.has_perm('bora.change_artwork') and Artwork.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
     form = ArtworkForm()
     if request.method == 'POST':
         form = ArtworkForm(request.POST, request.FILES, instance=Artwork.objects.get(id=id))
@@ -143,6 +153,7 @@ def edit_artwork(request, id):
     return render(request, 'edit_artwork.html', {'form': form})
 
 @login_required
+@permission_required('bora.delete_article')
 def delete_artwork(request, id):
     artwork = Artwork.objects.get(id=id)
     gallery = artwork.gallery
@@ -172,6 +183,8 @@ def member(request, username):
 
 @login_required
 def edit_profile(request, username):
+    if(not request.user.has_perm('bora.change_user') and User.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
     form = UserForm()
     if request.method == 'POST':
         form = UserForm(request.POST, request.FILES, instance=User.objects.get(username=username))
@@ -196,12 +209,14 @@ def event(request, id):
     event = Event.objects.get(id=id)
     reports= Report.objects.filter(event=event)
     user_wrote_report = False
-    user_reports = event.report_set.filter(author=request.user).count()
-    if user_reports > 0:
-        user_wrote_report = True
+    if(request.user.is_authenticated):
+        user_reports = event.report_set.filter(author=request.user).count()
+        if user_reports > 0:
+            user_wrote_report = True
     return render(request, 'event.html', {'event': event, 'reports': reports, 'user_wrote_report': user_wrote_report})
 
 @login_required
+@permission_required('bora.add_event')
 def add_event(request):
     form = EventForm()
     if request.method == 'POST':
@@ -217,6 +232,7 @@ def add_event(request):
 
 
 @login_required
+@permission_required('bora.change_event')
 def edit_event(request, id):
     form = EventForm()
     if request.method == 'POST':
@@ -229,6 +245,7 @@ def edit_event(request, id):
     return render(request, 'edit_event.html', {'form': form})
 
 @login_required
+@permission_required('bora.add_report')
 def add_report(request, event_id):
     form = ReportForm()
     if request.method == 'POST':
@@ -245,6 +262,9 @@ def add_report(request, event_id):
 
 @login_required
 def edit_report(request, id):
+    if(not request.user.has_perm('bora.change_report') and Report.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
+    form = UserForm()
     form = ReportForm()
     if request.method == 'POST':
         form = ReportForm(request.POST, request.FILES, instance=Report.objects.get(id=id))
@@ -259,12 +279,14 @@ def whole_review(request, id):
     review_item = ReviewItem.objects.get(id=id)
     reviews= Review.objects.filter(item=review_item)
     user_wrote_review = False
-    user_reviews = Review.objects.filter(author=request.user).count()
-    if user_reviews > 0:
-        user_wrote_review = True
+    if(request.user.is_authenticated):
+        user_reviews = Review.objects.filter(author=request.user).count()
+        if user_reviews > 0:
+            user_wrote_review = True
     return render(request, 'whole_review.html', {'review_item': review_item, 'reviews': reviews, 'user_wrote_review': user_wrote_review})
 
 @login_required
+@permission_required('bora.add_review_item')
 def add_review_item(request):
     form = ReviewItemForm()
     if request.method == 'POST':
@@ -279,6 +301,7 @@ def add_review_item(request):
     return render(request, 'add_review_item.html', {'form': form})
 
 @login_required
+@permission_required('bora.change_review_item')
 def edit_review_item(request, id):
     form = ReviewItemForm()
     if request.method == 'POST':
@@ -302,6 +325,7 @@ def reviews(request):
     return render(request, 'reviews.html', {'grouped_reviews': grouped_reviews})
 
 @login_required
+@permission_required('bora.add_review')
 def add_review(request):
     form = ReviewForm()
     if request.method == 'POST':
@@ -319,6 +343,8 @@ def add_review(request):
 
 @login_required
 def edit_review(request, id):
+    if(not request.user.has_perm('bora.change_review') and Review.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
     form = ReviewForm()
     if request.method == 'POST':
         form = ReviewForm(request.POST, request.FILES, instance=Review.objects.get(id=id))
@@ -330,6 +356,7 @@ def edit_review(request, id):
     return render(request, 'edit_review.html', {'form': form})
 
 @login_required
+@permission_required('bora.add_news')
 def add_news(request):
     form = NewsForm()
     if request.method == 'POST':
@@ -344,6 +371,8 @@ def add_news(request):
 
 @login_required
 def edit_news(request, id):
+    if(not request.user.has_perm('bora.change_news') and News.objects.get(id=id).author != request.user):
+        return HttpResponseForbidden()
     form = NewsForm()
     if request.method == 'POST':
         form = NewsForm(request.POST, request.FILES, instance=News.objects.get(id=id))
@@ -355,6 +384,7 @@ def edit_news(request, id):
     return render(request, 'edit_news.html', {'form': form})
 
 @login_required
+@permission_required('bora.delete_news')
 def delete_news(request, id):
     news = News.objects.get(id=id)
     if request.method == 'POST':
